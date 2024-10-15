@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: seo
+    ports:
+      - "13306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  next-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: next-app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.production
+    depends_on:
+      db: # depends_on에 db로 하니까 next_app이 실행하면서 prisma 에러가 반복 됨 service_healthy를 통해 MySQL 서버가 완전히 준비된 후에만 실행하게 함
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:

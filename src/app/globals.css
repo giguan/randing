@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-noto-sans-kr: 'Noto Sans KR', sans-serif;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-noto-sans-kr);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
